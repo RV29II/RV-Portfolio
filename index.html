@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rishi Vaghela | Cybersecurity & Networks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #0f1215;
+    --bg3: #141820;
+    --green: #00ff9d;
+    --green-dim: #00cc7a;
+    --green-dark: #003d25;
+    --cyan: #00d4ff;
+    --cyan-dim: #0099bb;
+    --red: #ff3c3c;
+    --text: #c8d6e5;
+    --text-dim: #6b7f94;
+    --border: #1e2a35;
+    --border-bright: #2a3f50;
+    --mono: 'Share Tech Mono', monospace;
+    --sans: 'Rajdhani', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+  /* Scanline overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Circuit board background pattern */
+  .circuit-bg {
+    position: fixed;
+    inset: 0;
+    opacity: 0.04;
+    background-image: linear-gradient(var(--green) 1px, transparent 1px), linear-gradient(90deg, var(--green) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 40px;
+    height: 56px;
+    background: rgba(10, 12, 15, 0.92);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo { font-family: var(--mono); font-size: 14px; color: var(--green); letter-spacing: 0.05em; }
+  .nav-logo span { color: var(--text-dim); }
+
+  .nav-links { display: flex; gap: 32px; list-style: none; }
+  .nav-links a { font-family: var(--mono); font-size: 12px; color: var(--text-dim); text-decoration: none; letter-spacing: 0.08em; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--green); }
+
+  .nav-status { display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+  /* HERO */
+  #hero { position: relative; min-height: 100vh; display: flex; align-items: center; padding: 80px 40px 60px; overflow: hidden; }
+  .hero-content { position: relative; z-index: 1; max-width: 700px; }
+  .hero-prefix { font-family: var(--mono); font-size: 13px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+  .hero-prefix::before { content: ''; width: 24px; height: 1px; background: var(--green); }
+  h1 { font-family: var(--mono); font-size: clamp(36px, 6vw, 72px); font-weight: 400; color: #fff; line-height: 1.1; margin-bottom: 8px; letter-spacing: -0.02em; }
+  h1 .accent { color: var(--green); }
+  .hero-role { font-family: var(--sans); font-size: 18px; color: var(--text-dim); font-weight: 500; margin-bottom: 24px; letter-spacing: 0.05em; }
+  .hero-desc { font-size: 15px; color: var(--text); line-height: 1.8; max-width: 540px; margin-bottom: 36px; opacity: 0.85; }
+  .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { font-family: var(--mono); font-size: 13px; padding: 12px 28px; background: var(--green); color: #000; border: none; cursor: pointer; letter-spacing: 0.05em; transition: background 0.2s, transform 0.1s; text-decoration: none; display: inline-block; }
+  .btn-primary:hover { background: var(--green-dim); transform: translateY(-1px); }
+  .btn-outline { font-family: var(--mono); font-size: 13px; padding: 12px 28px; background: transparent; color: var(--green); border: 1px solid var(--green); cursor: pointer; letter-spacing: 0.05em; transition: background 0.2s, transform 0.1s; text-decoration: none; display: inline-block; }
+  .btn-outline:hover { background: rgba(0,255,157,0.05); transform: translateY(-1px); }
+
+  /* Terminal block */
+  .terminal { position: absolute; right: 40px; top: 50%; transform: translateY(-50%); width: 420px; background: var(--bg2); border: 1px solid var(--border-bright); font-family: var(--mono); font-size: 12px; opacity: 0.75; }
+  .terminal-bar { display: flex; align-items: center; gap: 6px; padding: 8px 14px; background: var(--bg3); border-bottom: 1px solid var(--border); }
+  .t-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .t-red { background: #ff5f57; }
+  .t-yellow { background: #febc2e; }
+  .t-green { background: #28c840; }
+  .terminal-title { flex: 1; text-align: center; color: var(--text-dim); font-size: 11px; }
+  .terminal-body { padding: 16px; line-height: 2; }
+  .t-prompt { color: var(--green); }
+  .t-cmd { color: var(--cyan); }
+  .t-out { color: var(--text-dim); padding-left: 16px; }
+  .t-highlight { color: var(--green); }
+  .t-cursor { display: inline-block; width: 8px; height: 14px; background: var(--green); animation: blink 1s infinite; vertical-align: middle; margin-left: 4px; }
+
+  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+  /* SECTIONS */
+  section { position: relative; z-index: 1; padding: 80px 40px; max-width: 1100px; margin: 0 auto; }
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; }
+  .section-num { font-family: var(--mono); font-size: 12px; color: var(--green); }
+  .section-title { font-family: var(--mono); font-size: 22px; font-weight: 400; color: #fff; letter-spacing: 0.02em; }
+  .section-line { flex: 1; height: 1px; background: var(--border); max-width: 200px; }
+
+  /* SKILLS */
+  .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .skill-block { background: var(--bg2); padding: 24px; transition: background 0.2s; }
+  .skill-block:hover { background: var(--bg3); }
+  .skill-cat { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 14px; text-transform: uppercase; }
+  .skill-items { display: flex; flex-direction: column; gap: 6px; }
+  .skill-item { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text); font-weight: 500; }
+  .skill-item::before { content: ''; width: 4px; height: 4px; background: var(--green); flex-shrink: 0; }
+
+  /* PROJECTS */
+  .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .project-card { background: var(--bg2); padding: 28px; position: relative; overflow: hidden; transition: background 0.2s; }
+  .project-card:hover { background: var(--bg3); }
+  .project-card::before { content: ''; position: absolute; top: 0; left: 0; width: 3px; height: 0; background: var(--green); transition: height 0.3s; }
+  .project-card:hover::before { height: 100%; }
+  .project-num { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-bottom: 12px; }
+  .project-title { font-family: var(--sans); font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 10px; letter-spacing: 0.03em; }
+  .project-desc { font-size: 14px; color: var(--text-dim); line-height: 1.7; margin-bottom: 18px; }
+  .project-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { font-family: var(--mono); font-size: 10px; padding: 3px 8px; border: 1px solid var(--border-bright); color: var(--text-dim); letter-spacing: 0.05em; }
+  .tag.green { border-color: var(--green-dark); color: var(--green); background: rgba(0,255,157,0.04); }
+
+  /* CERTS */
+  .certs-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .cert-row { display: flex; align-items: center; justify-content: space-between; padding: 18px 24px; background: var(--bg2); transition: background 0.2s; gap: 16px; }
+  .cert-row:hover { background: var(--bg3); }
+  .cert-left { display: flex; align-items: center; gap: 14px; }
+  .cert-icon { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; border: 1px solid var(--green-dark); color: var(--green); font-family: var(--mono); font-size: 10px; flex-shrink: 0; }
+  .cert-name { font-size: 15px; font-weight: 600; color: #fff; }
+  .cert-issuer { font-family: var(--mono); font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+  .cert-badge { font-family: var(--mono); font-size: 10px; padding: 3px 10px; border: 1px solid var(--green-dark); color: var(--green); white-space: nowrap; }
+
+  /* ABOUT */
+  .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .about-block { background: var(--bg2); padding: 32px; }
+  .about-label { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 10px; text-transform: uppercase; }
+  .about-text { font-size: 15px; color: var(--text); line-height: 1.8; }
+  .about-stat { font-family: var(--mono); font-size: 32px; color: #fff; margin-bottom: 4px; }
+  .about-stat-label { font-size: 13px; color: var(--text-dim); }
+
+  /* CONTACT */
+  #contact { border-top: 1px solid var(--border); background: var(--bg2); padding: 60px 40px; text-align: center; }
+  .contact-inner { max-width: 500px; margin: 0 auto; }
+  .contact-label { font-family: var(--mono); font-size: 11px; color: var(--green); letter-spacing: 0.1em; margin-bottom: 16px; }
+  .contact-heading { font-family: var(--mono); font-size: 28px; color: #fff; margin-bottom: 12px; }
+  .contact-sub { font-size: 14px; color: var(--text-dim); margin-bottom: 32px; }
+  .contact-links { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .contact-link { font-family: var(--mono); font-size: 12px; padding: 10px 20px; border: 1px solid var(--border-bright); color: var(--text); text-decoration: none; letter-spacing: 0.05em; transition: border-color 0.2s, color 0.2s; }
+  .contact-link:hover { border-color: var(--green); color: var(--green); }
+  .privacy-note { margin-top: 24px; font-family: var(--mono); font-size: 11px; color: var(--text-dim); display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .privacy-note::before { content: '[SECURE]'; color: var(--green); font-size: 10px; }
+
+  /* FOOTER */
+  footer { padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--text-dim); border-top: 1px solid var(--border); }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    nav { padding: 0 20px; } .nav-links { display: none; } #hero { padding: 100px 20px 60px; } .terminal { display: none; }
+    section { padding: 60px 20px; } .about-grid { grid-template-columns: 1fr; } footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+
+  /* FADE IN */
+  .fade-in { opacity: 0; transform: translateY(16px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+
+<div class="circuit-bg"></div>
+
+<nav>
+  <div class="nav-logo">rv<span>@portfolio</span>:~$</div>
+  <ul class="nav-links">
+    <li><a href="#about">about</a></li>
+    <li><a href="#skills">skills</a></li>
+    <li><a href="#projects">projects</a></li>
+    <li><a href="#certs">certs</a></li>
+    <li><a href="#contact">contact</a></li>
+  </ul>
+  <div class="nav-status">
+    <div class="status-dot"></div>
+    available for hire
+  </div>
+</nav>
+
+<section id="hero" style="max-width:100%;padding-top:80px;">
+  <div class="hero-content fade-in">
+    <div class="hero-prefix">CYBERSECURITY &amp; NETWORKS</div>
+    <h1>Rishi<br><span class="accent">Vaghela</span></h1>
+    <div class="hero-role">BSc (Hons) Cyber Security &amp; Networks · UEL</div>
+    <p class="hero-desc">
+      Security-focused student with 14+ months of experience in SOC workflows and network hardening. Specialized in blue team operations, from deploying secure Windows Server environments to advanced threat analysis. [cite: 3, 19, 20]
+    </p>
+    <div class="hero-btns">
+      <a href="mailto:rishivaghela912@gmail.com" class="btn-primary">Get In Touch</a>
+      <a href="#projects" class="btn-outline">View Projects</a>
+    </div>
+  </div>
+
+  <div class="terminal fade-in" style="transition-delay:0.2s;">
+    <div class="terminal-bar">
+      <div class="t-dot t-red"></div>
+      <div class="t-dot t-yellow"></div>
+      <div class="t-dot t-green"></div>
+      <div class="terminal-title">kali@rv — bash — 80x24</div>
+    </div>
+    <div class="terminal-body">
+      <div><span class="t-prompt">┌──(rv㉿kali)-[~]</span></div>
+      <div><span class="t-prompt">└─$</span> <span class="t-cmd">nmap -sV --open target.local</span></div>
+      <div class="t-out">Starting Nmap 7.94...</div>
+      <div class="t-out">PORT     STATE SERVICE  VERSION</div>
+      <div class="t-out"><span class="t-highlight">22/tcp   open  ssh</span>     OpenSSH 9.2</div>
+      <div class="t-out"><span class="t-highlight">80/tcp   open  http</span>    nginx 1.25</div>
+      <div>&nbsp;</div>
+      <div><span class="t-prompt">└─$</span> <span class="t-cmd">whoami</span></div>
+      <div class="t-out"><span class="t-highlight">rishi-vaghela</span></div>
+      <div>&nbsp;</div>
+      <div><span class="t-prompt">└─$</span> <span class="t-cursor"></span></div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="section-header fade-in">
+    <span class="section-num">01</span>
+    <h2 class="section-title">about_me</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="about-grid fade-in">
+    <div class="about-block" style="grid-column: span 2;">
+      <div class="about-label">// technical background</div>
+      <p class="about-text">
+        Second-year student at UEL with a hands-on foundation in security operations and system hardening[cite: 3]. Recently completed a Work-Based Learning placement as an IT Lab Technician, where I deployed 15+ hardened Windows Server environments and governed 30+ user accounts using least-privilege principles[cite: 19, 20, 22].
+      </p>
+    </div>
+    <div class="about-block">
+      <div class="about-stat">2nd</div>
+      <div class="about-stat-label">Year BSc Student · UEL [cite: 45]</div>
+    </div>
+    <div class="about-block">
+      <div class="about-stat">14+</div>
+      <div class="about-stat-label">Months Technical Experience [cite: 3]</div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="section-header fade-in">
+    <span class="section-num">02</span>
+    <h2 class="section-title">skills</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="skills-grid fade-in">
+    <div class="skill-block">
+      <div class="skill-cat">// security</div>
+      <div class="skill-items">
+        <div class="skill-item">OWASP Top 10 [cite: 8]</div>
+        <div class="skill-item">MITRE ATT&amp;CK [cite: 8]</div>
+        <div class="skill-item">Threat Analysis [cite: 8]</div>
+        <div class="skill-item">GDPR / UK DPA 2018 [cite: 8]</div>
+      </div>
+    </div>
+    <div class="skill-block">
+      <div class="skill-cat">// networking</div>
+      <div class="skill-items">
+        <div class="skill-item">TCP/IP &amp; OSI Model [cite: 8]</div>
+        <div class="skill-item">VLSM / Subnetting [cite: 8]</div>
+        <div class="skill-item">Firewalls &amp; Wireshark [cite: 8]</div>
+        <div class="skill-item">ICMP Diagnostics [cite: 8]</div>
+      </div>
+    </div>
+    <div class="skill-block">
+      <div class="skill-cat">// systems</div>
+      <div class="skill-items">
+        <div class="skill-item">Kali Linux &amp; Ubuntu [cite: 8]</div>
+        <div class="skill-item">Windows Server / AD [cite: 8]</div>
+        <div class="skill-item">Oracle VMware [cite: 8]</div>
+        <div class="skill-item">AWS [cite: 8]</div>
+      </div>
+    </div>
+    <div class="skill-block">
+      <div class="skill-cat">// tools</div>
+      <div class="skill-items">
+        <div class="skill-item">Python &amp; Bash [cite: 8]</div>
+        <div class="skill-item">SQL [cite: 8]</div>
+        <div class="skill-item">HTML / CSS [cite: 8]</div>
+        <div class="skill-item">GitHub [cite: 8]</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="section-header fade-in">
+    <span class="section-num">03</span>
+    <h2 class="section-title">projects</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="projects-grid fade-in">
+    <div class="project-card">
+      <div class="project-num">// 001</div>
+      <div class="project-title">Enterprise Network Home Lab</div>
+      <p class="project-desc">Designed a 6-subnet topology on 193.49.88.0/25 using VLSM; linked 3 Cisco 1841 routers in a full-mesh triangle for redundancy[cite: 38, 39].</p>
+      <div class="project-tags">
+        <span class="tag green">Cisco Packet Tracer</span>
+        <span class="tag green">VLSM</span>
+        <span class="tag">RIP</span>
+        <span class="tag">Wireshark</span>
+      </div>
+    </div>
+    <div class="project-card">
+      <div class="project-num">// 002</div>
+      <div class="project-title">AWS Mental Wellbeing App</div>
+      <p class="project-desc">Contributed to a nationwide AWS programme building a cross-platform app; gained exposure to cloud infrastructure provisioning[cite: 41, 42, 43].</p>
+      <div class="project-tags">
+        <span class="tag green">AWS</span>
+        <span class="tag green">iOS / Android</span>
+        <span class="tag">Cloud Infrastructure</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="certs">
+  <div class="section-header fade-in">
+    <span class="section-num">04</span>
+    <h2 class="section-title">certifications</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="certs-list fade-in">
+    <div class="cert-row">
+      <div class="cert-left">
+        <div class="cert-icon">AIG</div>
+        <div>
+          <div class="cert-name">Shields Up: Cybersecurity Simulation</div>
+          <div class="cert-issuer">AIG via Forage · Jan 2026 [cite: 10, 11]</div>
+        </div>
+      </div>
+      <div class="cert-badge">COMPLETED</div>
+    </div>
+    <div class="cert-row">
+      <div class="cert-left">
+        <div class="cert-icon">MC</div>
+        <div>
+          <div class="cert-name">Cybersecurity Job Simulation</div>
+          <div class="cert-issuer">Mastercard via Forage · 2025 [cite: 12, 13]</div>
+        </div>
+      </div>
+      <div class="cert-badge">COMPLETED</div>
+    </div>
+    <div class="cert-row">
+      <div class="cert-left">
+        <div class="cert-icon">CSC</div>
+        <div>
+          <div class="cert-name">Intro to Cybersecurity & Networking</div>
+          <div class="cert-issuer">Cisco Networking Academy · Apr 2024 [cite: 14, 15]</div>
+        </div>
+      </div>
+      <div class="cert-badge">VERIFIED</div>
+    </div>
+  </div>
+</section>
+
+<div id="contact">
+  <div class="contact-inner fade-in">
+    <div class="contact-label">// get_in_touch</div>
+    <div class="contact-heading">Let's Connect</div>
+    <p class="contact-sub">Seeking a Summer 2026 Security Engineer Internship to apply a security-first mindset at internet scale[cite: 6].</p>
+    <div class="contact-links">
+      <a href="mailto:rishivaghela912@gmail.com" class="contact-link">email</a>
+      <a href="https://linkedin.com/in/rishi-vaghela-762597256/" class="contact-link" target="_blank">linkedin</a>
+      <a href="https://github.com/RV29II" class="contact-link" target="_blank">github</a>
+    </div>
+    <div class="privacy-note">Secure communication via official channels only</div>
+  </div>
+</div>
+
+<footer>
+  <span>rv@portfolio:~$ <span style="color:var(--green)">echo "built on cloudflare pages"</span></span>
+  <span>© 2026 Rishi Vaghela · No cookies · No trackers</span>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
